@@ -1,0 +1,83 @@
+{
+  "name": "test-vite-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "prepare": "husky install",
+    "test": "vitest"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "**/*.{js,jsx,ts,tsx}": [
+      "yarn lint"
+    ]
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@hookform/resolvers": "^3.4.2",
+    "@mui/icons-material": "^5.15.19",
+    "@mui/material": "^5.15.15",
+    "@react-oauth/google": "^0.12.1",
+    "@reduxjs/toolkit": "^2.2.3",
+    "@tolgee/i18next": "^5.28.1",
+    "@tolgee/react": "^5.28.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-react": "^7.34.1",
+    "framer-motion": "^11.2.11",
+    "i18next": "^23.11.5",
+    "i18next-icu": "^2.3.0",
+    "intl-messageformat": "^10.5.14",
+    "lint-staged": "^15.2.2",
+    "msw": "^2.3.1",
+    "react": "^18.2.0",
+    "react-custom-scrollbars-2": "^4.5.0",
+    "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
+    "react-hook-form": "^7.51.4",
+    "react-i18next": "^14.1.2",
+    "react-redux": "^9.1.1",
+    "react-router-dom": "^6.22.3",
+    "react-toastify": "^10.0.5",
+    "styled-components": "^6.1.8",
+    "victory": "^37.0.2",
+    "yup": "^1.4.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/react": "^15.0.7",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.3.3",
+    "@types/react-custom-scrollbars": "^4.0.13",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitest/ui": "^1.6.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "husky": "^8.0.0",
+    "jsdom": "^24.1.0",
+    "prettier": "3.2.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vite-plugin-checker": "^0.6.4",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^1.6.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

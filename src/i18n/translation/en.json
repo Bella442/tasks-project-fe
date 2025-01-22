@@ -1,0 +1,100 @@
+{
+  "COMMON": {
+    "BUTTONS": {
+      "BACK": "Back",
+      "SEARCH": "Search",
+      "SIGN_UP": "Sign Up",
+      "SUBMIT": "Submit"
+    },
+    "LABELS": {
+      "COUNTRY": "Country"
+    },
+    "LINKS": {
+      "HERE": "here"
+    }
+  },
+  "FORM": {
+    "CITY": "City",
+    "EMAIL": "E-mail",
+    "PASSWORD": "Password",
+    "PROFILE_TYPE": "Profile Type"
+  },
+  "FORM_OPTION": {
+    "BUSINESS": "Business",
+    "PERSONAL": "Personal"
+  },
+  "HEADER": {
+    "BUTTONS": {
+      "LOGOUT": "Logout"
+    }
+  },
+  "HOME_PAGE": {
+    "CONTAINER_TITLE": "Technologies",
+    "TITLE": "An example React app built to serve as a template."
+  },
+  "LOGIN_PAGE": {
+    "ERRORS_LOGIN_FAILED": "Login Failed",
+    "LABELS": {
+      "STILL_NOT_REGISTERED": "Still not registered? You can do it "
+    },
+    "SNACKBAR": {
+      "CONFIRM_LOGGING_IN": "You have successfully logged in.",
+      "CONFIRM_REGISTRATION": "You can now log in with your new account."
+    },
+    "TITLE": "Login"
+  },
+  "SERVER_COMMUNICATION_PAGE": {
+    "ALERTS": {
+      "CONNECTION_CLOSED_{REASON}": "Connection closed cleanly, {reason}",
+      "CONNECTION_DIED": "Connection died",
+      "SERVER_RESPONDED_WITH_{RESPONSE}": "Server responded with: {response}"
+    },
+    "BUTTONS": {
+      "SEND_MESSAGE": "Send Message"
+    },
+    "LABELS": {
+      "RTK_SOCKET_CONNECTION": "RTK socket connection:",
+      "SERVER_MESSAGE": "Please write a message to the server:"
+    },
+    "TITLE": "Server Communication Page"
+  },
+  "SIDE_BAR": {
+    "FIRST_TABLE": "First Table",
+    "HOME": "Home",
+    "SECOND_TABLE": "Second Table",
+    "SERVER_COMMUNICATION": "Server Communication"
+  },
+  "TABLE_1_PAGE": {
+    "INPUT": {
+      "PLACEHOLDER": "Please enter a country"
+    },
+    "TITLE": "Table of Universities"
+  },
+  "TABLE_2_PAGE": {
+    "TITLE": "Table 2 page"
+  },
+  "UNIVERSITY_TABLE": {
+    "COLUMNS": {
+      "UNIVERSITY_NAME": "University Name",
+      "WEB_PAGES": "Web Pages"
+    }
+  },
+  "USED_TECHNOLOGIES": {
+    "ACTION_TEXTS": {
+      "BUILT_ON": "Built on",
+      "FETCHING_API_AND_GLOBAL_STATE_MANAGEMENT": "Fetching API and global state management",
+      "ROUTING_BY": "Routing by",
+      "STYLED_WITH": "Styled with",
+      "TESTED_ON": "Tested on",
+      "WRITTEN_IN": "Written in"
+    },
+    "NAMES": {
+      "MATERIAL_UI": "MaterialUI",
+      "REACT": "React",
+      "REACT_ROUTER_DOM": "React Router DOM",
+      "REDUX_TOOLKIT": "Redux Toolkit",
+      "VITE": "Vite",
+      "VITEST": "Vitest"
+    }
+  }
+}
