@@ -25,37 +25,13 @@ const Scrollbar = (props: ScrollbarProps) => {
     background: theme.palette.primary.main + "6B",
   };
 
-  const trackHorizontalStyle = {
-    position: "absolute",
-    height: "6px",
-    right: "2px",
-    bottom: "2px",
-    left: "2px",
-    borderRadius: "3px",
-  };
-
-  const thumbHorizontalStyle = {
-    position: "relative",
-    display: "block",
-    height: "100%",
-    cursor: "pointer",
-    borderRadius: "inherit",
-    backgroundColor: theme.palette.primary.main + "6B",
-  };
-
   return (
     <Scrollbars
       autoHide
       autoHideDuration={500}
       autoHideTimeout={500}
-      renderThumbHorizontal={({ style, ...props }) => (
-        <div {...props} style={{ ...style, ...thumbHorizontalStyle }} />
-      )}
       renderThumbVertical={({ style, ...props }) => (
         <div {...props} style={{ ...style, ...thumbVerticalStyle }} />
-      )}
-      renderTrackHorizontal={({ style, ...props }) => (
-        <div {...props} style={{ ...style, ...trackHorizontalStyle }} />
       )}
       renderTrackVertical={({ style, ...props }) => (
         <div {...props} style={{ ...style, ...trackVerticalStyle }} />

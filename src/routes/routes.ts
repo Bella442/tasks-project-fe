@@ -8,6 +8,7 @@ export enum ROUTES {
   SECOND_TABLE_PAGE = "/auth/second_table",
   SERVER_COMMUNICATION = "/auth/server_communication",
   DASHBOARD_PAGE = "/auth/dashboard",
+  CHAT = "/auth/chat",
 }
 
 export enum PRIVATE_ROUTES {
@@ -17,4 +18,5 @@ export enum PRIVATE_ROUTES {
   SECOND_TABLE_PAGE = "/second_table",
   SERVER_COMMUNICATION = "/server_communication",
   DASHBOARD_PAGE = "/dashboard",
+  CHAT = "/chat",
 }

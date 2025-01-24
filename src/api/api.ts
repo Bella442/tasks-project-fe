@@ -15,10 +15,13 @@ export const api = createApi({
   reducerPath: API_REDUCER_KEY,
   baseQuery: customFetchBaseQuery({
     baseUrl: BASE_API_URL,
-    /*  prepareHeaders: (headers: any) => {
-      // TO DO - add headers like session tokens and change any type
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("token");
+
+      headers.set("Authorization", token ? `Bearer ${token}` : "");
+
       return headers;
-    }, */
+    },
   }),
   endpoints: () => ({}), // TODO - revisit later
 });

@@ -10,20 +10,38 @@ import { GoogleLogin } from "@react-oauth/google";
 
 import { Grid } from "@mui/material";
 
+import { useLoginMutation } from "@api/auth/authApi";
 import PageTitle from "@components/Texts/PageTitle";
 import Paragraph from "@components/Texts/Paragraph";
 
 import { AUTHENTICATED } from "@constants/constants";
 import { ROUTES } from "@routes/routes";
 
+import { useAppDispatch } from "@store/hooks/hooks";
 import { isStringVariableTrue } from "@utils/utils";
 
 import LoginForm from "./components/LoginForm";
+import { setLoggedUser } from "./loggedUserSlice";
+import { LoginData } from "./types";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const [login, result] = useLoginMutation();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (result.data && result.data.accessToken) {
+      localStorage.setItem(AUTHENTICATED, "true");
+      localStorage.setItem("token", result.data.accessToken);
+      dispatch(setLoggedUser(result.data.user));
+      toast.success(t("LOGIN_PAGE.SNACKBAR.SUCCESS_LOGIN"));
+      navigate(ROUTES.HOME);
+    } else if (result.error) {
+      toast.error(result.error.toString());
+    }
+  }, [navigate, result, t, dispatch]);
 
   const googleEnabled = isStringVariableTrue(
     import.meta.env.VITE_ENABLE_GOOGLE_LOGIN,
@@ -42,10 +60,8 @@ const Login = () => {
     }
   }, [location, t]);
 
-  const handleLogin = () => {
-    localStorage.setItem(AUTHENTICATED, "true");
-    toast.success(t("LOGIN_PAGE.SNACKBAR.CONFIRM_LOGGING_IN"));
-    navigate(ROUTES.HOME);
+  const handleLogin = (data: LoginData) => {
+    login(data);
   };
 
   return (
@@ -80,9 +96,7 @@ const Login = () => {
             onError={() => {
               console.info(t("LOGIN_PAGE.ERRORS_LOGIN_FAILED"));
             }}
-            onSuccess={() => {
-              handleLogin();
-            }}
+            onSuccess={() => {}}
           />
         )}
       </Grid>

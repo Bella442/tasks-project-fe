@@ -17,7 +17,12 @@ type SchemaProps = {
  */
 
 export default function customFetchBaseQuery(
-  baseFetchOptions = { baseUrl: "" },
+  baseFetchOptions = {
+    baseUrl: "",
+    prepareHeaders: (headers: Headers) => {
+      return headers;
+    },
+  },
 ): BaseQueryFn<
   string | (FetchArgs & SchemaProps),
   unknown,

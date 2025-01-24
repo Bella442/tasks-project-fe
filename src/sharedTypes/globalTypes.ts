@@ -11,3 +11,23 @@ export interface Country {
   name: string;
   flag: string;
 }
+export interface TasksData {
+  id: number;
+  userId: number;
+  taskName: string;
+  startDate: Date;
+  endDate?: Date;
+  taskStatus: string;
+  user?: User;
+}
+
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash: string;
+  role: string;
+  managerId?: number;
+  isActive?: boolean;
+}

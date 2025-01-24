@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-export const useDebounce = (value: unknown, delay = 500) => {
+import { NEED_TO_BE_ANY } from "@sharedTypes/globalTypes";
+
+export const useDebounce = (value: NEED_TO_BE_ANY, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {

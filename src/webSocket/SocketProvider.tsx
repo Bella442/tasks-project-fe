@@ -1,6 +1,8 @@
 import { ReactElement, createContext } from "react";
 
-const socket = new WebSocket("wss://ws.postman-echo.com/raw");
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3000");
 
 export const SocketContext = createContext(socket);
 

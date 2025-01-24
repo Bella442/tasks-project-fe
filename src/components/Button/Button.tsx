@@ -8,6 +8,7 @@ interface ButtonProps {
   onClick?: () => void;
   style?: string;
   autoFocus?: boolean;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
 
 const StyledButton = styled.button<{ $style: string }>`
@@ -29,6 +30,7 @@ const Button = (props: ButtonProps) => {
       theme={theme}
       type={props.type}
       onClick={props.onClick}
+      onKeyDown={props.onKeyDown}
     >
       {props.text}
     </StyledButton>

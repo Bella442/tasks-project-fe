@@ -7,7 +7,6 @@ import { object, string } from "yup";
 import Button from "@components/Button/Button";
 import FormInputField from "@components/Input/FormInputField";
 import Form from "@components/StyledComponents/StyledForm";
-
 import {
   MIN_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH_MESSAGE,
@@ -15,8 +14,10 @@ import {
   WRONG_EMAIL_FORMAT_MESSAGE,
 } from "@constants/constants";
 
+import { LoginData } from "../types";
+
 interface LoginFormProps {
-  handleLogin: () => void;
+  handleLogin: (data: LoginData) => void;
 }
 
 const schema = object().shape({
@@ -41,8 +42,7 @@ const LoginForm = (props: LoginFormProps) => {
     <Form
       noValidate //Prevents default Chrome email validation
       onSubmit={handleSubmit((data) => {
-        console.info(data);
-        props.handleLogin();
+        props.handleLogin(data);
       })}
     >
       <FormInputField

@@ -9,7 +9,6 @@ import { ThemeProvider } from "@mui/material/styles";
 
 import GlobalDialog from "@components/GlobalDialog/GlobalDialog";
 import ChatwootWidget from "@components/LiveChat/ChatwootWidget";
-import Scrollbar from "@components/Scrollbar/Scrollbar";
 import SecretMenu from "@components/SecretMenu/SecretMenu";
 
 import { ENABLE_MOCKING, TOAST_SETTINGS } from "@constants/constants";
@@ -34,6 +33,10 @@ const App = () => {
   const [open, setOpen] = useState(false);
   const secretMenuEnabled = isStringVariableTrue(
     import.meta.env.VITE_SECRET_MENU_ENABLED,
+  );
+
+  const supportChatEnabled = isStringVariableTrue(
+    import.meta.env.VITE_SUPPORT_CHAT_ENABLED,
   );
 
   // Logic for secret menu and mockup server
@@ -72,18 +75,16 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <HelmetProvider>
         <AppIntegrations />
-        <ChatwootWidget />
+        {supportChatEnabled && <ChatwootWidget />}
         <ToastContainer {...TOAST_SETTINGS} />
         <BrowserRouter basename={ROUTES.BASE_ROUTE}>
           <GlobalDialogContextProvider>
             {secretMenuEnabled && <SecretMenu open={open} setOpen={setOpen} />}
             <GlobalDialog />
-            <Scrollbar>
-              <Routes>
-                <Route element={<PrivateContainer />} path="/auth/*" />
-                <Route element={<PublicContainer />} path="/*" />
-              </Routes>
-            </Scrollbar>
+            <Routes>
+              <Route element={<PrivateContainer />} path="/auth/*" />
+              <Route element={<PublicContainer />} path="/*" />
+            </Routes>
           </GlobalDialogContextProvider>
         </BrowserRouter>
       </HelmetProvider>
