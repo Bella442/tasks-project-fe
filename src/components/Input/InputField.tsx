@@ -16,11 +16,13 @@ interface InputFieldProps {
   sx?: SxProps<Theme> | undefined;
   size?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  endAdornment?: React.ReactNode;
 }
 
 const InputField = (props: InputFieldProps) => {
   return (
     <TextField
+      InputProps={{ endAdornment: props.endAdornment }}
       autoComplete={props.autoCompleteAttribute}
       autoFocus={props.autoFocus}
       error={props.error}

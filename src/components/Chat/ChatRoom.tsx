@@ -1,82 +1,91 @@
 import { useEffect, useState } from "react";
 
-import { io } from "socket.io-client";
 // import { v4 as uuid } from "uuid";
 
 import { Grid } from "@mui/material";
 
+import Scrollbar from "@components/Scrollbar/Scrollbar";
 import { useAppSelector } from "@store/hooks/hooks";
 
 import ChatMessage from "./ChatMessage";
 import { StyledChatRoom } from "./Chatroom.style";
 import TypeMessageContainer from "./TypeMessageContainer";
+import {
+  useJoinRoomMutation,
+  useLeaveRoomMutation,
+  useReceiveMessagesQuery,
+  useSendMessageMutation,
+} from "./chatApi";
 import { Message } from "./types";
-
-const socket = io(
-  `http://localhost:3000?roomId=${"dc398446-f8bc-49a8-90cf-95ec4e335b59"}`,
-);
 
 const ChatRoom = () => {
   const loggedUser = useAppSelector((state) => state.loggedUser.user);
-  const [messages, setMessages] = useState<Array<Message> | []>([]);
-  //   const [users, setUsers] = useState([]);
-  //   const [user, setUser] = useState<ChatUser | null>(null);
+  const [activeRoom] = useState<string>("d1f5e46c-06a6-4e38-b964-765ec5cb7dcb");
+  // const [rooms] = useState(["d1f5e46c-06a6-4e38-b964-765ec5cb7dcb", "room2", "room3"]);
+
+  const { data: messages = [] } = useReceiveMessagesQuery(activeRoom);
+  const [joinRoom] = useJoinRoomMutation();
+  const [leaveRoom] = useLeaveRoomMutation();
+  const [sendMessage] = useSendMessageMutation();
+  // const lastMessageRef = useRef<React.MutableRefObject<HTMLDivElement> | null>(null);
 
   useEffect(() => {
-    const messages = localStorage.getItem("messages") ?? "";
+    const container = document.getElementById("messages");
 
-    if (messages !== "") {
-      setMessages(JSON.parse(messages));
-    } else {
-      setMessages([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("messages", JSON.stringify(messages));
+    // container?.lastElementChild?.scrollTo(0, container?.scrollHeight);
+    // container?.scrollTo(0, 0);
+    // container?.firstElementChild?.scrollIntoView();
+    container?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+    // container?.scrollTo(0, container?.scrollHeight ?? 0);
   }, [messages]);
 
-  // Receive messages
   useEffect(() => {
-    socket.on("message", (message: Message) => {
-      setMessages((messages: Message[]) => [...messages, message]);
-    });
-  }, []);
+    // Join the initial room
+    joinRoom(activeRoom);
 
-  //   // Join a chat room
-  //   const joinChatRoom = (userDetails: ChatUser) => {
-  //     setUser(userDetails);
-  //     socket.emit("join", userDetails);
-  //   };
+    return () => {
+      // Leave the active room on unmount
+      leaveRoom(activeRoom);
+    };
+  }, [activeRoom, joinRoom, leaveRoom]);
 
-  //   // Leave a chat room
-  //   const leaveChatRoom = () => {
-  //     socket.emit("leave", user);
-  //     setUser(null);
-  //   };
+  // const handleRoomChange = (newRoom: string) => {
+  //   leaveRoom(activeRoom); // Leave the current room
+  //   setActiveRoom(newRoom); // Switch to the new room
+  //   joinRoom(newRoom); // Join the new room
+  // };
 
-  // Send a message
-  const sendMessage = (messageText: string) => {
-    const message = JSON.stringify({
-      userId: loggedUser?.id ?? "",
-      userName: loggedUser?.firstName ?? "",
-      text: messageText,
-      createdAt: new Date(),
-    });
+  const handleSendMessage = (messageText: string) => {
+    if (messageText.trim().length > 0) {
+      const message: Message = {
+        userId: loggedUser?.id ?? null,
+        userName: loggedUser?.firstName ?? "",
+        text: messageText,
+        createdAt: new Date().toDateString(),
+      };
 
-    socket.emit("message", message);
+      sendMessage({ roomId: activeRoom, message });
+    }
   };
 
   return (
     <StyledChatRoom>
       <Grid container display="flex" flexDirection="column" height="100%">
-        <Grid item flex={1}>
-          {messages.map((message, index) => (
-            <ChatMessage key={index} message={message} />
-          ))}
+        <Grid item flex={1} height="70%" overflow="hidden">
+          <Scrollbar>
+            <div id="messages">
+              {messages.map((message, index) => (
+                <ChatMessage
+                  key={index}
+                  loggedUser={loggedUser}
+                  message={message}
+                />
+              ))}
+            </div>
+          </Scrollbar>
         </Grid>
         <Grid item>
-          <TypeMessageContainer sendMessage={sendMessage} />
+          <TypeMessageContainer sendMessage={handleSendMessage} />
         </Grid>
       </Grid>
     </StyledChatRoom>

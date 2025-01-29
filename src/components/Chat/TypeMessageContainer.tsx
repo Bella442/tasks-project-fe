@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-import Button from "@components/Button/Button";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import { Button } from "@mui/material";
+
 import InputField from "@components/Input/InputField";
 
 import { StyledTypeMessageContainer } from "./Chatroom.style";
@@ -20,14 +22,19 @@ const TypeMessageContainer = (props: TypeMessageContainerProps) => {
     <StyledTypeMessageContainer>
       <InputField
         autoFocus
+        endAdornment={
+          <Button onClick={() => handleSendMessage()}>
+            <SendRoundedIcon />
+          </Button>
+        }
         size="small"
         sx={{
           width: "100%",
-          marginRight: "16px",
+          padding: "16px",
           "& .MuiOutlinedInput-root": {
             height: "48px",
             "& fieldset": {
-              backgroundColor: "#c952b31a",
+              backgroundColor: "#393db51a",
               height: "48px",
               borderRadius: "4px",
             },
@@ -38,12 +45,6 @@ const TypeMessageContainer = (props: TypeMessageContainerProps) => {
           setText(e.target.value);
         }}
         onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-      />
-      <Button
-        style="height: 48px; background-color: #d1bbcd"
-        text="Send"
-        type="submit"
-        onClick={() => handleSendMessage()}
       />
     </StyledTypeMessageContainer>
   );

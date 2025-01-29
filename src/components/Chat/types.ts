@@ -1,7 +1,8 @@
 export interface Message {
-  userId: number;
+  userId: number | null;
   userName: string;
   text: string;
+  createdAt: string;
 }
 
 export interface ChatUser {
