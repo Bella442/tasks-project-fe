@@ -23,11 +23,12 @@ const ChatRoom = () => {
   const [activeRoom] = useState<string>("d1f5e46c-06a6-4e38-b964-765ec5cb7dcb");
   // const [rooms] = useState(["d1f5e46c-06a6-4e38-b964-765ec5cb7dcb", "room2", "room3"]);
 
-  const { data: messages = [] } = useReceiveMessagesQuery(activeRoom);
+  const {
+    data: messages = JSON.parse(localStorage.getItem("messages") || "[]") || [],
+  } = useReceiveMessagesQuery(activeRoom);
   const [joinRoom] = useJoinRoomMutation();
   const [leaveRoom] = useLeaveRoomMutation();
   const [sendMessage] = useSendMessageMutation();
-  // const lastMessageRef = useRef<React.MutableRefObject<HTMLDivElement> | null>(null);
 
   useEffect(() => {
     const container = document.getElementById("messages");
@@ -74,7 +75,7 @@ const ChatRoom = () => {
         <Grid item flex={1} height="70%" overflow="hidden">
           <Scrollbar>
             <div id="messages">
-              {messages.map((message, index) => (
+              {messages.map((message: Message, index: number) => (
                 <ChatMessage
                   key={index}
                   loggedUser={loggedUser}

@@ -3,8 +3,9 @@ import { HttpMethods } from "@constants/constants";
 
 import { loginRequestSchema, loginResponseSchema } from "./apiValidations";
 
-export enum TasksEndpointURLs {
+export enum AuthEndpointURLs {
   LOGIN = "/login",
+  REFRESH = "/refresh",
 }
 
 export const login = createEndpoint({
@@ -12,19 +13,7 @@ export const login = createEndpoint({
   responseSchema: loginResponseSchema,
   requestSchema: loginRequestSchema,
   fn: (credentials) => ({
-    url: TasksEndpointURLs.LOGIN,
+    url: AuthEndpointURLs.LOGIN,
     body: credentials,
   }),
 });
-
-// export const getCountries = createEndpoint({
-//   method: HttpMethods.GET,
-//   responseSchema: countriesResponseSchema,
-//   fn: () => ({
-//     url: TasksEndpointURLs.GET_COUNTRIES,
-//     extraParams: {
-//       isExternalUrl: true,
-//       externalApiUrl: import.meta.env.VITE_COUNTRIES_API,
-//     },
-//   }),
-// });

@@ -12,14 +12,3 @@ export type LoginResBody = LoginEndpointType["responseSchema"];
 export type LoginReqBody = LoginEndpointType["requestSchema"];
 
 /**/
-
-// /**
-// 	GetCountriesEndpointType, GetCountriesResBody
-// 	@return EndpointType, ResponseBodyType
-// **/
-// export type GetCountriesEndpointType = GetEndpointSchemaType<
-//   typeof getCountries
-// >;
-
-// export type GetCountriesResBody = GetCountriesEndpointType["responseSchema"];
-// /**/

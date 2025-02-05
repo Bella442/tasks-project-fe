@@ -24,6 +24,10 @@ import LoginForm from "./components/LoginForm";
 import { setLoggedUser } from "./loggedUserSlice";
 import { LoginData } from "./types";
 
+type LoginError = {
+  data: { message: string };
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,14 +36,17 @@ const Login = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (result.data && result.data.accessToken) {
+    if (result.data && result.data) {
       localStorage.setItem(AUTHENTICATED, "true");
-      localStorage.setItem("token", result.data.accessToken);
+      localStorage.setItem("accessToken", result.data.accessToken);
+      localStorage.setItem("refreshToken", result.data.refreshToken);
       dispatch(setLoggedUser(result.data.user));
       toast.success(t("LOGIN_PAGE.SNACKBAR.SUCCESS_LOGIN"));
       navigate(ROUTES.HOME);
     } else if (result.error) {
-      toast.error(result.error.toString());
+      const error = result.error as LoginError;
+
+      toast.error(error.data?.message?.toString());
     }
   }, [navigate, result, t, dispatch]);
 

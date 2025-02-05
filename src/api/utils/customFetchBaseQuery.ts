@@ -8,6 +8,8 @@ import {
 
 import { z } from "zod";
 
+import { AuthEndpointURLs } from "@api/auth/authEndpoints";
+
 type SchemaProps = {
   responseSchema: z.Schema;
   extraParams?: { [key: string]: any };
@@ -15,6 +17,13 @@ type SchemaProps = {
 /**
  * Wrapper around rtk query fetchBaseQuery that validates response schema
  */
+
+type RefreshResponse = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+let globalAbortController = new AbortController();
 
 export default function customFetchBaseQuery(
   baseFetchOptions = {
@@ -32,17 +41,64 @@ export default function customFetchBaseQuery(
   return async (args, api, extraOptions) => {
     const isArgsNotString = typeof args !== "string";
 
-    const baseResult = await fetchBaseQuery({
+    // Ensure args includes the abort signal
+    const requestArgs = {
+      ...(typeof args === "string" ? { url: args } : args),
+      signal: globalAbortController.signal, // Attach signal to every request
+    };
+
+    let baseResult = await fetchBaseQuery({
       ...baseFetchOptions,
       ...extraOptions,
       baseUrl:
         isArgsNotString && args?.extraParams?.isExternalUrl
           ? args?.extraParams?.externalApiUrl
           : baseFetchOptions.baseUrl,
-    })(args, api, extraOptions);
+    })(requestArgs, api, extraOptions);
 
-    // TODO add validations schema checking for the response
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    // If unauthorized, try refreshing token
+    if (baseResult.error && baseResult.error.status === 401) {
+      // Cancel all ongoing requests
+      globalAbortController.abort();
+
+      // Reset global abort controller for future requests
+      globalAbortController = new AbortController();
+
+      const refreshResult = await fetchBaseQuery({
+        baseUrl: baseFetchOptions.baseUrl,
+      })(
+        {
+          url: AuthEndpointURLs.REFRESH,
+          method: "POST",
+          body: { refreshToken },
+          signal: globalAbortController.signal, // Attach signal to refresh request
+        },
+        api,
+        extraOptions,
+      );
+
+      if (refreshResult.data) {
+        const data = refreshResult.data as RefreshResponse;
+        const newAccessToken = data.accessToken;
+        const newRefreshToken = data.refreshToken;
+
+        // Store new tokens
+        setTokens(newAccessToken, newRefreshToken);
+
+        // Retry original request with new token
+        baseResult = await fetchBaseQuery()(args, api, extraOptions);
+      }
+    }
 
     return baseResult;
   };
 }
+
+const setTokens = (newAccessToken: string, newRefreshToken?: string) => {
+  localStorage.setItem("accessToken", newAccessToken);
+  if (newRefreshToken) {
+    localStorage.setItem("refreshToken", newRefreshToken);
+  }
+};
