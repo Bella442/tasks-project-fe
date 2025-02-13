@@ -11,6 +11,7 @@ import { createChatRoom, getUserChatList } from "./chatEndpoints";
 import { Message } from "../types";
 
 let socket: Socket | null = null;
+const messages = new Map<string, Message[]>();
 
 // Maintain a map of rooms for multiple connections
 const roomListeners: Record<string, boolean> = {};
@@ -56,9 +57,9 @@ export const chatApi = api.injectEndpoints({
         return { data: undefined };
       },
     }),
-    receiveMessages: builder.query<Message[], string>({
+    receiveMessages: builder.query<Record<string, Message[]>, void>({
       queryFn() {
-        return { data: [] };
+        return { data: Object.fromEntries(messages) };
       },
       async onCacheEntryAdded(
         _arg,
@@ -70,9 +71,14 @@ export const chatApi = api.injectEndpoints({
           // when data is received from the socket connection to the server,
           // update our query result with the received message
           if (socket) {
-            socket.on(`messageReceived`, (message: Message) => {
+            socket.on(`messageReceived`, (message: Message, roomId) => {
+              console.info(`received message for roomID ${roomId}`);
               updateCachedData((draft) => {
-                draft.push(message);
+                if (!draft[roomId]) {
+                  draft[roomId] = [];
+                }
+
+                draft[roomId].push(message);
               });
             });
           }

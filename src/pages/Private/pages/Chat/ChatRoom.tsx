@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { Grid } from "@mui/material";
 
@@ -18,15 +18,23 @@ interface IProperties {
 const ChatRoom = (props: IProperties) => {
   const loggedUser = useAppSelector((state) => state.loggedUser.user);
 
-  const { data: messages } = useReceiveMessagesQuery(props.activeRoom);
+  const { data } = useReceiveMessagesQuery();
 
   const [sendMessage] = useSendMessageMutation();
+
+  const currentRoomMessages = useMemo(() => {
+    const messages = data
+      ? new Map<string, Message[]>(Object.entries(data))
+      : new Map<string, Message[]>();
+
+    return messages?.get(props.activeRoom);
+  }, [data, props]);
 
   useEffect(() => {
     const container = document.getElementById("messages");
 
     container?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [currentRoomMessages]);
 
   const handleSendMessage = (messageText: string) => {
     if (messageText.trim().length > 0) {
@@ -34,7 +42,7 @@ const ChatRoom = (props: IProperties) => {
         userId: loggedUser?.id ?? null,
         userName: loggedUser?.firstName ?? "",
         text: messageText,
-        createdAt: new Date().toDateString(),
+        createdAt: new Date(),
       };
 
       sendMessage({ roomId: props.activeRoom, message });
@@ -47,7 +55,7 @@ const ChatRoom = (props: IProperties) => {
         <Grid item flex={1} height="70%" overflow="hidden">
           <Scrollbar>
             <div id="messages">
-              {messages?.map((message: Message, index: number) => (
+              {currentRoomMessages?.map((message: Message, index: number) => (
                 <ChatMessage
                   key={index}
                   loggedUser={loggedUser}

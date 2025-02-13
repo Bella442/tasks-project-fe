@@ -2,7 +2,7 @@ export interface Message {
   userId: string | null;
   userName: string;
   text: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface ChatUser {

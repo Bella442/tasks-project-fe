@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import CheckIcon from "@mui/icons-material/Check";
 import PersonIcon from "@mui/icons-material/Person";
 import { Grid, List, ListItem, ListItemButton } from "@mui/material";
-
-import { GlobalDialogContext } from "@contexts/globalDialogContext";
 
 import { ChatUser } from "./types";
 
@@ -15,13 +13,12 @@ interface IProperties {
 }
 const AllUsersList = (props: IProperties) => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const { setDialogValues } = useContext(GlobalDialogContext);
 
   useEffect(() => {
     if (selectedUser) {
-      setDialogValues({ selectedUser });
+      props.setNewUser(selectedUser);
     }
-  }, [selectedUser, setDialogValues]);
+  }, [props, selectedUser]);
 
   return (
     <Grid container display="flex" flexDirection="column" spacing={2}>

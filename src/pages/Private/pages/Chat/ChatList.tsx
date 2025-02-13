@@ -24,6 +24,7 @@ import { Chat, ChatUser } from "./types";
 
 interface IProperties {
   activeRoom: string;
+  setActiveRoom: (roomId: string) => void;
   handleRoomChange: (roomId: string) => void;
 }
 const selectedItemColors = {
@@ -58,24 +59,22 @@ const ChatList = (props: IProperties) => {
     }
   }, [availableUsers, chatList]);
 
-  const handleStartNewConversation = () => {
+  const handleStartNewConversation = async () => {
     if (!newUserId || !loggedUser?.id) {
       return;
     }
 
-    createRoom({
-      roomId: uuid(),
+    const newRoomId = uuid();
+
+    await createRoom({
+      roomId: newRoomId,
       initiatorId: loggedUser?.id,
       participantId: newUserId,
     });
-
+    props.setActiveRoom(newRoomId);
     refreshChatList();
     setNewUserId(null);
     setDialogOpened(false);
-  };
-
-  const handleSetSelectedUser = (userId: string | null) => {
-    setNewUserId(userId);
   };
 
   const getParticipantName = (chat: Chat) => {
@@ -180,7 +179,7 @@ const ChatList = (props: IProperties) => {
           <AllUsersList
             availableUsers={mappedUsers as Array<ChatUser>}
             newUser={newUserId}
-            setNewUser={handleSetSelectedUser}
+            setNewUser={(userId) => setNewUserId(userId)}
           />
         </CustomDialog>
       )}

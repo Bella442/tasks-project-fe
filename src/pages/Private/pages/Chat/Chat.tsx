@@ -13,11 +13,9 @@ const Chat = () => {
 
   useEffect(() => {
     // Join the initial room
-    // joinRoom(activeRoom);
-    // return () => {
-    //   // Leave the active room on unmount
-    //   leaveRoom(activeRoom);
-    // };
+    if (activeRoom) {
+      joinRoom(activeRoom);
+    }
   }, [activeRoom, joinRoom, leaveRoom]);
 
   const handleRoomChange = (newRoom: string) => {
@@ -29,7 +27,11 @@ const Chat = () => {
   return (
     <Grid container display="flex" height="100%" spacing={2} width="100%">
       <Grid item>
-        <ChatList activeRoom={activeRoom} handleRoomChange={handleRoomChange} />
+        <ChatList
+          activeRoom={activeRoom}
+          handleRoomChange={handleRoomChange}
+          setActiveRoom={setActiveRoom}
+        />
       </Grid>
       {activeRoom && (
         <Grid item flex={1}>
