@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 
 import InputField from "@components/Input/InputField";
 
-import { StyledTypeMessageContainer } from "./Chatroom.style";
+import { StyledTypeMessageContainer } from "./ChatRoom.style";
 
 interface TypeMessageContainerProps {
   sendMessage: (message: string) => void;

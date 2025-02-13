@@ -28,7 +28,11 @@ const GlobalDialog = () => {
       <Grid container alignItems="center">
         <Grid item>
           <Paragraph
-            style={`font-weight: ${theme.typography.h3}; font-size: ${SIZE.LARGE}; margin: 0px 16px 0px 0px;`}
+            style={{
+              fontWeight: theme.typography.h3.fontWeight,
+              fontSize: SIZE.LARGE,
+              margin: "0px 16px 0px 0px",
+            }}
           >
             {dialogProps?.title}
           </Paragraph>
@@ -37,7 +41,10 @@ const GlobalDialog = () => {
           <CloseIcon
             fontSize="small"
             sx={{ color: theme.palette.grey[800], verticalAlign: "super" }}
-            onClick={closeDialog}
+            onClick={() => {
+              dialogProps?.onCloseIconClick;
+              closeDialog();
+            }}
           />
         </Grid>
       </Grid>

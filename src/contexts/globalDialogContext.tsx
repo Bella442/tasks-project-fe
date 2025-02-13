@@ -1,5 +1,7 @@
 import { ReactNode, createContext, useState } from "react";
 
+import { NEED_TO_BE_ANY } from "@sharedTypes/globalTypes";
+
 interface ButtonHandlers {
   text: string;
   onClick: () => void;
@@ -10,6 +12,7 @@ interface DialogType {
   title: string;
   content: React.ReactNode | null | undefined;
   buttonHandlers: Array<ButtonHandlers>;
+  onCloseIconClick?: () => void;
 }
 
 interface ContextType {
@@ -18,6 +21,8 @@ interface ContextType {
   openDialog: (props: DialogType) => void;
   dialogProps: DialogType | null;
   setDialogProps: (value: DialogType) => void;
+  dialogValues: NEED_TO_BE_ANY | null;
+  setDialogValues: (value: object) => void;
 }
 
 const defaultValue = {
@@ -26,6 +31,8 @@ const defaultValue = {
   openDialog: () => {},
   dialogProps: null,
   setDialogProps: () => {},
+  dialogValues: null,
+  setDialogValues: () => {},
 };
 
 export const GlobalDialogContext = createContext<ContextType>(defaultValue);
@@ -37,6 +44,7 @@ interface ProviderProps {
 export const GlobalDialogContextProvider = (props: ProviderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dialogProps, setDialogProps] = useState<DialogType | null>(null);
+  const [dialogValues, setDialogValues] = useState<NEED_TO_BE_ANY | null>(null);
 
   const closeDialog = () => {
     setIsOpen(false);
@@ -55,6 +63,8 @@ export const GlobalDialogContextProvider = (props: ProviderProps) => {
         closeDialog,
         dialogProps,
         setDialogProps,
+        dialogValues,
+        setDialogValues,
       }}
     >
       {props.children}

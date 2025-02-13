@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-
-// import { v4 as uuid } from "uuid";
+import { useEffect } from "react";
 
 import { Grid } from "@mui/material";
 
@@ -8,53 +6,27 @@ import Scrollbar from "@components/Scrollbar/Scrollbar";
 import { useAppSelector } from "@store/hooks/hooks";
 
 import ChatMessage from "./ChatMessage";
-import { StyledChatRoom } from "./Chatroom.style";
+import { StyledChatRoom } from "./ChatRoom.style";
 import TypeMessageContainer from "./TypeMessageContainer";
-import {
-  useJoinRoomMutation,
-  useLeaveRoomMutation,
-  useReceiveMessagesQuery,
-  useSendMessageMutation,
-} from "./chatApi";
+import { useReceiveMessagesQuery, useSendMessageMutation } from "./api/chatApi";
 import { Message } from "./types";
 
-const ChatRoom = () => {
-  const loggedUser = useAppSelector((state) => state.loggedUser.user);
-  const [activeRoom] = useState<string>("d1f5e46c-06a6-4e38-b964-765ec5cb7dcb");
-  // const [rooms] = useState(["d1f5e46c-06a6-4e38-b964-765ec5cb7dcb", "room2", "room3"]);
+interface IProperties {
+  activeRoom: string;
+}
 
-  const {
-    data: messages = JSON.parse(localStorage.getItem("messages") || "[]") || [],
-  } = useReceiveMessagesQuery(activeRoom);
-  const [joinRoom] = useJoinRoomMutation();
-  const [leaveRoom] = useLeaveRoomMutation();
+const ChatRoom = (props: IProperties) => {
+  const loggedUser = useAppSelector((state) => state.loggedUser.user);
+
+  const { data: messages } = useReceiveMessagesQuery(props.activeRoom);
+
   const [sendMessage] = useSendMessageMutation();
 
   useEffect(() => {
     const container = document.getElementById("messages");
 
-    // container?.lastElementChild?.scrollTo(0, container?.scrollHeight);
-    // container?.scrollTo(0, 0);
-    // container?.firstElementChild?.scrollIntoView();
     container?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-    // container?.scrollTo(0, container?.scrollHeight ?? 0);
   }, [messages]);
-
-  useEffect(() => {
-    // Join the initial room
-    joinRoom(activeRoom);
-
-    return () => {
-      // Leave the active room on unmount
-      leaveRoom(activeRoom);
-    };
-  }, [activeRoom, joinRoom, leaveRoom]);
-
-  // const handleRoomChange = (newRoom: string) => {
-  //   leaveRoom(activeRoom); // Leave the current room
-  //   setActiveRoom(newRoom); // Switch to the new room
-  //   joinRoom(newRoom); // Join the new room
-  // };
 
   const handleSendMessage = (messageText: string) => {
     if (messageText.trim().length > 0) {
@@ -65,7 +37,7 @@ const ChatRoom = () => {
         createdAt: new Date().toDateString(),
       };
 
-      sendMessage({ roomId: activeRoom, message });
+      sendMessage({ roomId: props.activeRoom, message });
     }
   };
 
@@ -75,7 +47,7 @@ const ChatRoom = () => {
         <Grid item flex={1} height="70%" overflow="hidden">
           <Scrollbar>
             <div id="messages">
-              {messages.map((message: Message, index: number) => (
+              {messages?.map((message: Message, index: number) => (
                 <ChatMessage
                   key={index}
                   loggedUser={loggedUser}

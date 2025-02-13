@@ -1,9 +1,9 @@
 import { GetEndpointSchemaType } from "@api/utils/endpointSchemaTypes";
 
-import { getLoggedUserData } from "./usersEndpoints";
+import { getLoggedUserData, getChatUsers } from "./usersEndpoints";
 
 /**
-	GetPersonalTasksEndpointType, GetPersonalTasksResBody
+	GetLoggedUserDataEndpointType, GetLoggedUserDataResBody
 	@return EndpointType, ResponseBodyType
 **/
 export type GetLoggedUserDataEndpointType = GetEndpointSchemaType<
@@ -15,13 +15,13 @@ export type GetLoggedUserDataResBody =
 
 /**/
 
-// /**
-// 	GetCountriesEndpointType, GetCountriesResBody
-// 	@return EndpointType, ResponseBodyType
-// **/
-// export type GetCountriesEndpointType = GetEndpointSchemaType<
-//   typeof getCountries
-// >;
+/**
+	GetChatUsersEndpointType, GetChatUsersResBody
+	@return EndpointType, ResponseBodyType
+**/
+export type GetChatUsersEndpointType = GetEndpointSchemaType<
+  typeof getChatUsers
+>;
 
-// export type GetCountriesResBody = GetCountriesEndpointType["responseSchema"];
-// /**/
+export type GetChatUsersResBody = GetChatUsersEndpointType["responseSchema"];
+/**/

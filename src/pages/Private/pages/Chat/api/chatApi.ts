@@ -2,7 +2,13 @@ import { io, Socket } from "socket.io-client";
 
 import { api } from "@api/api";
 
-import { Message } from "./types";
+import {
+  CreateChatRoomReqBody,
+  CreateChatRoomResBody,
+  GetUserChatListResBody,
+} from "./apiTypes";
+import { createChatRoom, getUserChatList } from "./chatEndpoints";
+import { Message } from "../types";
 
 let socket: Socket | null = null;
 
@@ -11,6 +17,12 @@ const roomListeners: Record<string, boolean> = {};
 
 export const chatApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    getUserChatList: builder.query<GetUserChatListResBody, void>({
+      query: getUserChatList,
+    }),
+    createRoom: builder.mutation<CreateChatRoomResBody, CreateChatRoomReqBody>({
+      query: createChatRoom,
+    }),
     joinRoom: builder.mutation<void, string>({
       queryFn: (roomId) => {
         if (!socket) {
@@ -85,6 +97,8 @@ export const {
   useLeaveRoomMutation,
   useSendMessageMutation,
   useReceiveMessagesQuery,
+  useGetUserChatListQuery,
+  useCreateRoomMutation,
 } = chatApi;
 
 export default chatApi.reducer;

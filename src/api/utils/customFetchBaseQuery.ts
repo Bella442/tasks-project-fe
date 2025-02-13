@@ -5,10 +5,13 @@ import {
   FetchBaseQueryError,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query";
+import { Mutex } from "async-mutex";
 
 import { z } from "zod";
 
 import { AuthEndpointURLs } from "@api/auth/authEndpoints";
+import { ROUTES } from "@routes/routes";
+import { NEED_TO_BE_ANY } from "@sharedTypes/globalTypes";
 
 type SchemaProps = {
   responseSchema: z.Schema;
@@ -23,7 +26,8 @@ type RefreshResponse = {
   refreshToken: string;
 };
 
-let globalAbortController = new AbortController();
+let refreshResult: NEED_TO_BE_ANY;
+const mutex = new Mutex();
 
 export default function customFetchBaseQuery(
   baseFetchOptions = {
@@ -41,12 +45,7 @@ export default function customFetchBaseQuery(
   return async (args, api, extraOptions) => {
     const isArgsNotString = typeof args !== "string";
 
-    // Ensure args includes the abort signal
-    const requestArgs = {
-      ...(typeof args === "string" ? { url: args } : args),
-      signal: globalAbortController.signal, // Attach signal to every request
-    };
-
+    await mutex.waitForUnlock();
     let baseResult = await fetchBaseQuery({
       ...baseFetchOptions,
       ...extraOptions,
@@ -54,41 +53,54 @@ export default function customFetchBaseQuery(
         isArgsNotString && args?.extraParams?.isExternalUrl
           ? args?.extraParams?.externalApiUrl
           : baseFetchOptions.baseUrl,
-    })(requestArgs, api, extraOptions);
-
-    const refreshToken = localStorage.getItem("refreshToken");
+    })(args, api, extraOptions);
 
     // If unauthorized, try refreshing token
     if (baseResult.error && baseResult.error.status === 401) {
-      // Cancel all ongoing requests
-      globalAbortController.abort();
+      const refreshToken = localStorage.getItem("refreshToken");
 
-      // Reset global abort controller for future requests
-      globalAbortController = new AbortController();
+      if (!mutex.isLocked()) {
+        const release = await mutex.acquire();
 
-      const refreshResult = await fetchBaseQuery({
-        baseUrl: baseFetchOptions.baseUrl,
-      })(
-        {
-          url: AuthEndpointURLs.REFRESH,
-          method: "POST",
-          body: { refreshToken },
-          signal: globalAbortController.signal, // Attach signal to refresh request
-        },
-        api,
-        extraOptions,
-      );
+        try {
+          refreshResult = await fetchBaseQuery({
+            baseUrl: baseFetchOptions.baseUrl,
+          })(
+            {
+              url: AuthEndpointURLs.REFRESH,
+              method: "POST",
+              body: { refreshToken },
+            },
+            api,
+            extraOptions,
+          );
 
-      if (refreshResult.data) {
-        const data = refreshResult.data as RefreshResponse;
-        const newAccessToken = data.accessToken;
-        const newRefreshToken = data.refreshToken;
+          if (refreshResult.data) {
+            const data = refreshResult.data as RefreshResponse;
+            const newAccessToken = data.accessToken;
+            const newRefreshToken = data.refreshToken;
 
-        // Store new tokens
-        setTokens(newAccessToken, newRefreshToken);
+            // Store new tokens
+            setTokens(newAccessToken, newRefreshToken);
 
-        // Retry original request with new token
-        baseResult = await fetchBaseQuery()(args, api, extraOptions);
+            // retry the initial query
+            baseResult = await fetchBaseQuery({
+              ...baseFetchOptions,
+            })(args, api, extraOptions);
+          } else {
+            localStorage.clear();
+            window.location.replace(ROUTES.LOGIN);
+          }
+        } finally {
+          // release must be called once the mutex should be released again.
+          release();
+        }
+      } else {
+        // wait until the mutex is available without locking it
+        await mutex.waitForUnlock();
+        baseResult = await fetchBaseQuery({
+          ...baseFetchOptions,
+        })(args, api, extraOptions);
       }
     }
 

@@ -11,4 +11,13 @@ export const userSchema = z.object({
   isActive: z.boolean(),
 });
 
+export const chatUserSchema = z.object({
+  email: z.string(),
+  firstName: z.string(),
+  id: z.number(),
+  lastName: z.string(),
+});
+
 export const usersResponseSchema = z.array(userSchema);
+
+export const chatUserResponseSchema = z.array(chatUserSchema);

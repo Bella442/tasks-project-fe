@@ -4,7 +4,7 @@ import {
   StyledChatMessage,
   StyledNameParagraph,
   StyledParagraph,
-} from "./Chatroom.style";
+} from "./ChatRoom.style";
 import { Message } from "./types";
 
 interface ChatMessageProps {

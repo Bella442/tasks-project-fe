@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 
 import { ThemeProvider } from "@mui/material/styles";
 
-import GlobalDialog from "@components/GlobalDialog/GlobalDialog";
+import GlobalDialog from "@components/Dialog/GlobalDialog";
 import ChatwootWidget from "@components/LiveChat/ChatwootWidget";
 import SecretMenu from "@components/SecretMenu/SecretMenu";
 

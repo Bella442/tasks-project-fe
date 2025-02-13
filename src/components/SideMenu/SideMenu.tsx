@@ -65,6 +65,7 @@ const SideMenu = () => {
 
   return (
     <Backdrop
+      aria-hidden
       open={openBackdrop}
       sx={{
         color: "#fff",

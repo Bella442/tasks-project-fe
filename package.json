@@ -27,6 +27,7 @@
     "@reduxjs/toolkit": "^2.2.3",
     "@tolgee/i18next": "^5.28.1",
     "@tolgee/react": "^5.28.1",
+    "async-mutex": "^0.5.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-react": "^7.34.1",

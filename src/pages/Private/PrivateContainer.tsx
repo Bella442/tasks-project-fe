@@ -6,13 +6,12 @@ import { Grid } from "@mui/material";
 
 import { useGetLoggedUserDataQuery } from "@api/users/usersApi";
 import Button from "@components/Button/Button";
-import ChatRoom from "@components/Chat/ChatRoom";
+
 import Header from "@components/Header/Header";
 import Scrollbar from "@components/Scrollbar/Scrollbar";
 import MenuToggle from "@components/SideMenu/MenuToggle";
 import SideMenu from "@components/SideMenu/SideMenu";
 import { AUTHENTICATED } from "@constants/constants";
-
 import { setLoggedUser } from "@pages/Public/pages/Login/loggedUserSlice";
 import NotFound from "@pages/Public/pages/NotFound/NotFound";
 import { PRIVATE_ROUTES, ROUTES } from "@routes/routes";
@@ -20,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "@store/hooks/hooks";
 
 import { isLoggedIn } from "@utils/utils";
 
+import Chat from "./pages/Chat/Chat";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Home from "./pages/Home/Home";
 import Hotels from "./pages/Hotels/Hotels";
@@ -75,7 +75,7 @@ const PrivateContainer = () => {
                 element={<Dashboard />}
                 path={PRIVATE_ROUTES.DASHBOARD_PAGE}
               />
-              <Route element={<ChatRoom />} path={PRIVATE_ROUTES.CHAT} />
+              <Route element={<Chat />} path={PRIVATE_ROUTES.CHAT} />
               <Route element={<NotFound />} path="*" />
             </Routes>
           </Grid>
