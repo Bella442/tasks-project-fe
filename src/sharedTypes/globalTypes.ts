@@ -13,7 +13,7 @@ export interface Country {
 }
 export interface TasksData {
   id: number;
-  userId: number;
+  userId: string;
   taskName: string;
   startDate: Date;
   endDate?: Date;
@@ -22,12 +22,12 @@ export interface TasksData {
 }
 
 export interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   passwordHash: string;
   role: string;
-  managerId?: number;
+  managerId?: string;
   isActive?: boolean;
 }

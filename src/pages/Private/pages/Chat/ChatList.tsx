@@ -32,7 +32,7 @@ const selectedItemColors = {
 };
 
 const ChatList = (props: IProperties) => {
-  const [newUserId, setNewUserId] = useState<number | null>(null);
+  const [newUserId, setNewUserId] = useState<string | null>(null);
   const [dialogOpened, setDialogOpened] = useState(false);
   const loggedUser = useAppSelector((state) => state.loggedUser.user);
   const { data: chatList, refetch: refreshChatList } =
@@ -74,7 +74,7 @@ const ChatList = (props: IProperties) => {
     setDialogOpened(false);
   };
 
-  const handleSetSelectedUser = (userId: number | null) => {
+  const handleSetSelectedUser = (userId: string | null) => {
     setNewUserId(userId);
   };
 

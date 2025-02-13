@@ -4,7 +4,7 @@ import { userSchema } from "@api/users/apiValidations";
 
 export const tasksSchema = z.object({
   id: z.number(),
-  userId: z.number(),
+  userId: z.string(),
   taskName: z.string(),
   startDate: z.date(),
   endDate: z.date().optional(),

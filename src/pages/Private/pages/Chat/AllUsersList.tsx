@@ -10,11 +10,11 @@ import { ChatUser } from "./types";
 
 interface IProperties {
   availableUsers: Array<ChatUser>;
-  newUser: number | null;
-  setNewUser: (userId: number | null) => void;
+  newUser: string | null;
+  setNewUser: (userId: string | null) => void;
 }
 const AllUsersList = (props: IProperties) => {
-  const [selectedUser, setSelectedUser] = useState<number | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const { setDialogValues } = useContext(GlobalDialogContext);
 
   useEffect(() => {

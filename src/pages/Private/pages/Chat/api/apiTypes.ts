@@ -26,4 +26,4 @@ export type CreateChatRoomEndpointType = GetEndpointSchemaType<
 export type CreateChatRoomResBody =
   CreateChatRoomEndpointType["responseSchema"];
 export type CreateChatRoomReqBody = CreateChatRoomEndpointType["requestSchema"];
-// /**/
+/**/

@@ -7,16 +7,9 @@ import { useGetUniversityDataByCountryQuery } from "@api/shared/api";
 import PageTitle from "@components/Texts/PageTitle";
 import UniversityTable from "@pages/components/UniversityTable";
 
-import { useAppSelector } from "@store/hooks/hooks";
-import { RootState } from "@store/store";
-
 const Table2Page = () => {
   const { t } = useTranslation();
-
-  const country = useAppSelector(
-    (state: RootState) => state.table1Page.country,
-  );
-  const { data } = useGetUniversityDataByCountryQuery({ country });
+  const { data } = useGetUniversityDataByCountryQuery({ country: "Bulgaria" });
 
   return (
     <Grid container flexDirection="column" spacing={2}>
