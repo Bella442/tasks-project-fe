@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { User } from "@sharedTypes/globalTypes";
 
 import {
@@ -10,15 +12,31 @@ import { Message } from "./types";
 interface ChatMessageProps {
   message: Message;
   loggedUser: User | null;
-  ref?: React.MutableRefObject<HTMLDivElement> | null;
 }
 
+let lastMessageSentBy = "";
+
 const ChatMessage = (props: ChatMessageProps) => {
-  const isCurrentUser = props.loggedUser?.id === props.message.userId;
+  const [displayName, setDisplayName] = useState(false);
+  const isCurrentUser = props.loggedUser?.id === props.message.sentBy;
+
+  useEffect(() => {
+    if (props.message.sentBy !== lastMessageSentBy) {
+      lastMessageSentBy = props.message.sentBy;
+      setDisplayName(true);
+    }
+  }, [props]);
 
   return (
-    <StyledChatMessage ref={props.ref} $isCurrentUser={isCurrentUser}>
-      <StyledNameParagraph>{props.message.userName}</StyledNameParagraph>
+    <StyledChatMessage
+      $displayName={displayName}
+      $isCurrentUser={isCurrentUser}
+    >
+      {displayName && (
+        <StyledNameParagraph $displayName={displayName}>
+          {props.message.userName}
+        </StyledNameParagraph>
+      )}
       <StyledParagraph $isCurrentUser={isCurrentUser}>
         {props.message.text}
       </StyledParagraph>

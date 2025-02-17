@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { Grid } from "@mui/material";
 
@@ -8,41 +8,70 @@ import { useAppSelector } from "@store/hooks/hooks";
 import ChatMessage from "./ChatMessage";
 import { StyledChatRoom } from "./ChatRoom.style";
 import TypeMessageContainer from "./TypeMessageContainer";
-import { useReceiveMessagesQuery, useSendMessageMutation } from "./api/chatApi";
+import {
+  useGetChatHistoryQuery,
+  useReceiveMessagesQuery,
+  useSendMessageMutation,
+} from "./api/chatApi";
 import { Message } from "./types";
 
 interface IProperties {
   activeRoom: string;
 }
 
+interface Scrollbar {
+  scrollToBottom: () => void;
+}
+
 const ChatRoom = (props: IProperties) => {
   const loggedUser = useAppSelector((state) => state.loggedUser.user);
-
+  const scrollbarRef = useRef(null);
   const { data } = useReceiveMessagesQuery();
-
+  const { data: chatHistory } = useGetChatHistoryQuery({
+    roomId: props.activeRoom,
+  });
   const [sendMessage] = useSendMessageMutation();
 
   const currentRoomMessages = useMemo(() => {
-    const messages = data
-      ? new Map<string, Message[]>(Object.entries(data))
-      : new Map<string, Message[]>();
+    const messages = new Map<string, Message[]>([[props.activeRoom, []]]);
 
-    return messages?.get(props.activeRoom);
-  }, [data, props]);
+    if (chatHistory) {
+      messages.set(props.activeRoom, [...chatHistory]);
+    }
+
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        messages.get(key)?.push(...value);
+      }
+    }
+
+    const roomMessages = messages?.get(props.activeRoom);
+
+    roomMessages?.sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+
+    return roomMessages;
+  }, [data, chatHistory, props.activeRoom]);
 
   useEffect(() => {
-    const container = document.getElementById("messages");
+    const current = scrollbarRef.current as unknown as Scrollbar;
 
-    container?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+    if (current) {
+      setTimeout(() => {
+        current.scrollToBottom();
+      }, 50);
+    }
   }, [currentRoomMessages]);
 
   const handleSendMessage = (messageText: string) => {
     if (messageText.trim().length > 0) {
       const message: Message = {
-        userId: loggedUser?.id ?? null,
+        sentBy: loggedUser?.id ?? "",
         userName: loggedUser?.firstName ?? "",
         text: messageText,
-        createdAt: new Date(),
+        createdAt: new Date().toString(),
       };
 
       sendMessage({ roomId: props.activeRoom, message });
@@ -53,16 +82,14 @@ const ChatRoom = (props: IProperties) => {
     <StyledChatRoom>
       <Grid container display="flex" flexDirection="column" height="100%">
         <Grid item flex={1} height="70%" overflow="hidden">
-          <Scrollbar>
-            <div id="messages">
-              {currentRoomMessages?.map((message: Message, index: number) => (
-                <ChatMessage
-                  key={index}
-                  loggedUser={loggedUser}
-                  message={message}
-                />
-              ))}
-            </div>
+          <Scrollbar ref={scrollbarRef}>
+            {currentRoomMessages?.map((message: Message, index: number) => (
+              <ChatMessage
+                key={index}
+                loggedUser={loggedUser}
+                message={message}
+              />
+            ))}
           </Scrollbar>
         </Grid>
         <Grid item>

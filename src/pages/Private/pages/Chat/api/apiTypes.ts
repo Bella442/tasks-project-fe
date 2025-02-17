@@ -1,6 +1,10 @@
 import { GetEndpointSchemaType } from "@api/utils/endpointSchemaTypes";
 
-import { createChatRoom, getUserChatList } from "./chatEndpoints";
+import {
+  createChatRoom,
+  getChatHistory,
+  getUserChatList,
+} from "./chatEndpoints";
 
 /**
 	GetUserChatListEndpointType, GetUserChatListResBody
@@ -12,6 +16,20 @@ export type GetUserChatListEndpointType = GetEndpointSchemaType<
 
 export type GetUserChatListResBody =
   GetUserChatListEndpointType["responseSchema"];
+
+/**/
+
+/**
+	GeChatHistoryEndpointType, GetChatHistoryResBody
+	@return EndpointType, ResponseBodyType
+**/
+export type GetChatHistoryEndpointType = GetEndpointSchemaType<
+  typeof getChatHistory
+>;
+
+export type GetChatHistoryResBody =
+  GetChatHistoryEndpointType["responseSchema"];
+export type GetChatHistoryReqBody = GetChatHistoryEndpointType["requestSchema"];
 
 /**/
 

@@ -1,11 +1,18 @@
 import { createEndpoint } from "@api/utils";
 import { HttpMethods } from "@constants/constants";
+import { transformUrl } from "@utils/utils";
 
-import { chatRequestSchema, chatResponseSchema } from "./apiValidations";
+import {
+  chatHistoryRequestSchema,
+  chatHistoryResponseSchema,
+  chatRequestSchema,
+  chatResponseSchema,
+} from "./apiValidations";
 
 export enum ChatEndpointURLs {
   CREATE_CHAT_ROOM = "chat",
   GET_USER_CHAT_LIST = "chat/userChatList",
+  GET_CHAT_HISTORY = "chat/chatRoomHistory",
 }
 
 export const getUserChatList = createEndpoint({
@@ -13,6 +20,17 @@ export const getUserChatList = createEndpoint({
   responseSchema: chatResponseSchema,
   fn: () => ({
     url: ChatEndpointURLs.GET_USER_CHAT_LIST,
+  }),
+});
+
+export const getChatHistory = createEndpoint({
+  method: HttpMethods.GET,
+  requestSchema: chatHistoryRequestSchema,
+  responseSchema: chatHistoryResponseSchema,
+  fn: ({ roomId }) => ({
+    url: transformUrl(ChatEndpointURLs.GET_CHAT_HISTORY, {
+      roomId,
+    }),
   }),
 });
 

@@ -1,8 +1,9 @@
 export interface Message {
-  userId: string | null;
+  id?: number | undefined;
+  sentBy: string;
   userName: string;
   text: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface ChatUser {

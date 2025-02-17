@@ -1,12 +1,14 @@
+import { forwardRef, RefObject } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
 import { useTheme } from "@mui/material/styles";
 
 interface ScrollbarProps {
   children: React.ReactNode;
+  ref?: RefObject<Scrollbars>;
 }
 
-const Scrollbar = (props: ScrollbarProps) => {
+const Scrollbar = forwardRef(function Scrollbar(props: ScrollbarProps, ref) {
   const theme = useTheme();
 
   const trackVerticalStyle = {
@@ -45,6 +47,7 @@ const Scrollbar = (props: ScrollbarProps) => {
 
   return (
     <Scrollbars
+      ref={ref as RefObject<Scrollbars>}
       autoHide
       hideTracksWhenNotNeeded
       autoHideDuration={500}
@@ -69,6 +72,6 @@ const Scrollbar = (props: ScrollbarProps) => {
       {props.children}
     </Scrollbars>
   );
-};
+});
 
 export default Scrollbar;

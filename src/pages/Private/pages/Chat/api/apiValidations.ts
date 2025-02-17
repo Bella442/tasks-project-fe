@@ -18,3 +18,17 @@ export const chatRequestSchema = z.object({
 });
 
 export const chatResponseSchema = z.array(chatSchema);
+
+export const messageSchema = z.object({
+  id: z.number().optional(),
+  sentBy: z.string(),
+  userName: z.string(),
+  text: z.string(),
+  createdAt: z.string(),
+});
+
+export const chatHistoryRequestSchema = z.object({
+  roomId: z.string(),
+});
+
+export const chatHistoryResponseSchema = z.array(messageSchema);
