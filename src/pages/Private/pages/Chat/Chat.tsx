@@ -1,38 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 import { Grid } from "@mui/material";
 
+import { useAppSelector } from "@store/hooks/hooks";
+
 import ChatList from "./ChatList";
 import ChatRoom from "./ChatRoom";
-import { useJoinRoomMutation } from "./api/chatApi";
+import {
+  useGetUnreadMessagesQuery,
+  useListenForNotificationsQuery,
+  useReadMessagesMutation,
+} from "./api/chatApi";
+import { setUnreadMessages } from "./api/chatSlice";
 
 const Chat = () => {
-  const [activeRoom, setActiveRoom] = useState<string>("");
-  const [joinRoom] = useJoinRoomMutation();
+  const activeRoom = useAppSelector((state) => state.chat.activeRoom);
+  const unreadMessages = useAppSelector((state) => state.chat.unreadMessages);
+  const dispatch = useDispatch();
+  const { data } = useGetUnreadMessagesQuery();
+  const [readMessages] = useReadMessagesMutation();
+
+  useListenForNotificationsQuery();
 
   useEffect(() => {
-    // Join the initial room
-    if (activeRoom) {
-      joinRoom(activeRoom);
+    if (data) {
+      data.forEach((room) => {
+        dispatch(setUnreadMessages(room));
+      });
     }
-  }, [activeRoom, joinRoom]);
+  }, [data, dispatch]);
 
-  const handleRoomChange = (newRoom: string) => {
-    setActiveRoom(newRoom); // Switch to the new room
-  };
+  useEffect(() => {
+    if (activeRoom && unreadMessages) {
+      readMessages({ roomId: activeRoom });
+    }
+  }, [activeRoom, unreadMessages, readMessages]);
 
   return (
     <Grid container display="flex" height="100%" spacing={2} width="100%">
       <Grid item>
-        <ChatList
-          activeRoom={activeRoom}
-          handleRoomChange={handleRoomChange}
-          setActiveRoom={setActiveRoom}
-        />
+        <ChatList />
       </Grid>
       {activeRoom && (
         <Grid item flex={1}>
-          <ChatRoom activeRoom={activeRoom} />
+          <ChatRoom />
         </Grid>
       )}
     </Grid>

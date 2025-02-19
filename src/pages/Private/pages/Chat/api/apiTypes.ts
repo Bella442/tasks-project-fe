@@ -3,7 +3,9 @@ import { GetEndpointSchemaType } from "@api/utils/endpointSchemaTypes";
 import {
   createChatRoom,
   getChatHistory,
+  getUnreadMessages,
   getUserChatList,
+  readMessages,
 } from "./chatEndpoints";
 
 /**
@@ -30,6 +32,32 @@ export type GetChatHistoryEndpointType = GetEndpointSchemaType<
 export type GetChatHistoryResBody =
   GetChatHistoryEndpointType["responseSchema"];
 export type GetChatHistoryReqBody = GetChatHistoryEndpointType["requestSchema"];
+
+/**/
+
+/**
+	GeUnreadMessagesEndpointType, GetUnreadMessagesResBody
+	@return EndpointType, ResponseBodyType
+**/
+export type GetUnreadMessagesEndpointType = GetEndpointSchemaType<
+  typeof getUnreadMessages
+>;
+
+export type GetUnreadMessagesResBody =
+  GetUnreadMessagesEndpointType["responseSchema"];
+
+/**/
+
+/**
+	ReadMessagesEndpointType, ReadMessagesResBody
+	@return EndpointType, ResponseBodyType
+**/
+export type ReadMessagesEndpointType = GetEndpointSchemaType<
+  typeof readMessages
+>;
+
+export type ReadMessagesResBody = ReadMessagesEndpointType["responseSchema"];
+export type ReadMessagesReqBody = ReadMessagesEndpointType["requestSchema"];
 
 /**/
 

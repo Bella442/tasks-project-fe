@@ -39,3 +39,7 @@ export const makeUrl = (path: string, externalUrl?: string): string => {
 
   return url + (path.startsWith("/") ? path : "/" + path);
 };
+
+export const getTimeString = (date: Date): string => {
+  return `${date.getHours()}:${date.getMinutes()}`;
+};

@@ -7,6 +7,13 @@ export const StyledChatRoom = styled.div`
   flex-direction: column;
 `;
 
+export const StyledTime = styled.div<{ $isCurrentUser: boolean }>`
+  font-size: 12px;
+  text-align: ${(props) => (props.$isCurrentUser ? "end" : "start")};
+  color: grey;
+  margin: 4px 8px;
+`;
+
 export const StyledTypeMessageContainer = styled.div`
   display: flex;
   width: 100%;
@@ -25,10 +32,9 @@ export const StyledChatMessage = styled.div<{
   align-items: ${(props) => (props.$isCurrentUser ? "flex-end" : "flex-start")};
 `;
 
-export const StyledParagraph = styled.p<{ $isCurrentUser: boolean }>`
+export const StyledParagraph = styled.div<{ $isCurrentUser: boolean }>`
   padding: 8px 16px;
   font-size: 16px;
-  margin: 0px;
   border-radius: 24px;
   background-color: ${(props) =>
     props.$isCurrentUser ? "#061e35b0" : "#213547"};
@@ -43,7 +49,6 @@ export const StyledNameParagraph = styled.p<{ $displayName: boolean }>`
   font-size: 12px;
   font-weight: 700;
   margin: 0;
-  /* margin: ${(props) => (props.$displayName ? "16px" : "0px 16px")}; */
   color: grey;
   width: fit-content;
 `;

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { User } from "@sharedTypes/globalTypes";
+import { getTimeString } from "@utils/utils";
 
 import {
   StyledChatMessage,
   StyledNameParagraph,
   StyledParagraph,
+  StyledTime,
 } from "./ChatRoom.style";
 import { Message } from "./types";
 
@@ -27,6 +29,12 @@ const ChatMessage = (props: ChatMessageProps) => {
     }
   }, [props]);
 
+  const time = (
+    <StyledTime $isCurrentUser={isCurrentUser}>
+      {getTimeString(new Date(props.message.createdAt))}
+    </StyledTime>
+  );
+
   return (
     <StyledChatMessage
       $displayName={displayName}
@@ -37,9 +45,13 @@ const ChatMessage = (props: ChatMessageProps) => {
           {props.message.userName}
         </StyledNameParagraph>
       )}
-      <StyledParagraph $isCurrentUser={isCurrentUser}>
-        {props.message.text}
-      </StyledParagraph>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {isCurrentUser && time}
+        <StyledParagraph $isCurrentUser={isCurrentUser}>
+          {props.message.text}
+        </StyledParagraph>
+        {!isCurrentUser && time}
+      </div>
     </StyledChatMessage>
   );
 };

@@ -7,12 +7,17 @@ import {
   chatHistoryResponseSchema,
   chatRequestSchema,
   chatResponseSchema,
+  unreadMessagesResponseSchema,
+  updateReadMessagesRequestSchema,
+  updateReadMessagesResponseSchema,
 } from "./apiValidations";
 
 export enum ChatEndpointURLs {
   CREATE_CHAT_ROOM = "chat",
   GET_USER_CHAT_LIST = "chat/userChatList",
   GET_CHAT_HISTORY = "chat/chatRoomHistory",
+  GET_UNREAD_MESSAGES = "chat/unreadMessages",
+  UPDATE_READ_MESSAGES = "chat/updateReadMessages",
 }
 
 export const getUserChatList = createEndpoint({
@@ -29,6 +34,25 @@ export const getChatHistory = createEndpoint({
   responseSchema: chatHistoryResponseSchema,
   fn: ({ roomId }) => ({
     url: transformUrl(ChatEndpointURLs.GET_CHAT_HISTORY, {
+      roomId,
+    }),
+  }),
+});
+
+export const getUnreadMessages = createEndpoint({
+  method: HttpMethods.GET,
+  responseSchema: unreadMessagesResponseSchema,
+  fn: () => ({
+    url: ChatEndpointURLs.GET_UNREAD_MESSAGES,
+  }),
+});
+
+export const readMessages = createEndpoint({
+  method: HttpMethods.PATCH,
+  requestSchema: updateReadMessagesRequestSchema,
+  responseSchema: updateReadMessagesResponseSchema,
+  fn: ({ roomId }) => ({
+    url: transformUrl(ChatEndpointURLs.UPDATE_READ_MESSAGES, {
       roomId,
     }),
   }),

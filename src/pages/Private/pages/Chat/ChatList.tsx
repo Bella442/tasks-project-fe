@@ -1,4 +1,5 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { v4 as uuid } from "uuid";
 
@@ -8,9 +9,10 @@ import {
   Divider,
   Grid,
   List,
-  ListItemButton,
   ListItem,
+  ListItemButton,
   ListItemText,
+  useTheme,
 } from "@mui/material";
 
 import { useGetChatUsersQuery } from "@api/users/usersApi";
@@ -19,20 +21,24 @@ import Paragraph from "@components/Texts/Paragraph";
 import { useAppSelector } from "@store/hooks/hooks";
 
 import AllUsersList from "./AllUsersList";
-import { useCreateRoomMutation, useGetUserChatListQuery } from "./api/chatApi";
+import {
+  useCreateRoomMutation,
+  useGetUserChatListQuery,
+  useJoinRoomMutation,
+} from "./api/chatApi";
+import { setActiveRoom } from "./api/chatSlice";
 import { Chat, ChatUser } from "./types";
 
-interface IProperties {
-  activeRoom: string;
-  setActiveRoom: (roomId: string) => void;
-  handleRoomChange: (roomId: string) => void;
-}
 const selectedItemColors = {
   backgroundColor: "#213547",
   color: "white",
 };
 
-const ChatList = (props: IProperties) => {
+const ChatList = () => {
+  const theme = useTheme();
+  const activeRoom = useAppSelector((state) => state.chat.activeRoom);
+  const unreadMessages = useAppSelector((state) => state.chat.unreadMessages);
+  const dispatch = useDispatch();
   const [newUserId, setNewUserId] = useState<string | null>(null);
   const [dialogOpened, setDialogOpened] = useState(false);
   const loggedUser = useAppSelector((state) => state.loggedUser.user);
@@ -40,6 +46,13 @@ const ChatList = (props: IProperties) => {
     useGetUserChatListQuery();
   const { data: availableUsers } = useGetChatUsersQuery();
   const [createRoom] = useCreateRoomMutation();
+  const [joinRoom] = useJoinRoomMutation();
+
+  useEffect(() => {
+    chatList?.forEach((chat) => {
+      joinRoom(chat.roomId);
+    });
+  }, [chatList, joinRoom]);
 
   const mappedUsers = useMemo(() => {
     if (chatList?.length && availableUsers?.length) {
@@ -71,7 +84,6 @@ const ChatList = (props: IProperties) => {
       initiatorId: loggedUser?.id,
       participantId: newUserId,
     });
-    props.setActiveRoom(newRoomId);
     refreshChatList();
     setNewUserId(null);
     setDialogOpened(false);
@@ -105,10 +117,10 @@ const ChatList = (props: IProperties) => {
           <PersonAddIcon />
           <Paragraph
             style={{
-              fontSize: "14px",
+              fontSize: theme.typography.fontSize,
               margin: "0px 8px",
               width: "fit-content",
-              fontWeight: "bold",
+              fontWeight: theme.typography.fontWeightBold,
             }}
           >
             Start new conversation
@@ -123,28 +135,40 @@ const ChatList = (props: IProperties) => {
               <ListItem
                 disablePadding
                 style={
-                  props.activeRoom === chat.roomId
-                    ? selectedItemColors
-                    : undefined
+                  activeRoom === chat.roomId ? selectedItemColors : undefined
                 }
               >
                 <ListItemButton
                   color="primary"
                   onClick={() =>
-                    chat.roomId !== props.activeRoom &&
-                    props.handleRoomChange(chat.roomId)
+                    chat.roomId !== activeRoom &&
+                    dispatch(setActiveRoom(chat.roomId))
                   }
                 >
                   <PersonIcon
                     color="primary"
                     style={
-                      props.activeRoom === chat.roomId
+                      activeRoom === chat.roomId
                         ? selectedItemColors
                         : undefined
                     }
                     sx={{ marginRight: "16px" }}
                   />
                   <ListItemText primary={getParticipantName(chat)} />
+                  {unreadMessages[chat.roomId] > 0 && (
+                    <div
+                      style={{
+                        ...selectedItemColors,
+                        width: "24px",
+                        fontSize: theme.typography.fontSize,
+                        fontWeight: theme.typography.fontWeightBold,
+                        borderRadius: "50%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {unreadMessages[chat.roomId]}
+                    </div>
+                  )}
                 </ListItemButton>
               </ListItem>
               <Divider />

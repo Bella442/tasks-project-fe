@@ -1,19 +1,26 @@
 import { io, Socket } from "socket.io-client";
 
 import { api } from "@api/api";
+import { RootState } from "@store/store";
 
 import {
   CreateChatRoomReqBody,
   CreateChatRoomResBody,
   GetChatHistoryReqBody,
   GetChatHistoryResBody,
+  GetUnreadMessagesResBody,
   GetUserChatListResBody,
+  ReadMessagesReqBody,
+  ReadMessagesResBody,
 } from "./apiTypes";
 import {
   createChatRoom,
   getChatHistory,
+  getUnreadMessages,
   getUserChatList,
+  readMessages,
 } from "./chatEndpoints";
+import { incrementUnreadMessages } from "./chatSlice";
 import { Message } from "../types";
 
 let socket: Socket | null = null;
@@ -21,6 +28,13 @@ const messages = new Map<string, Message[]>();
 
 // Maintain a map of rooms for multiple connections
 const roomListeners: Record<string, boolean> = {};
+
+const initializeSocket = () => {
+  if (!socket) {
+    socket = io(import.meta.env.VITE_API_URL);
+    console.info("✅ Socket initialized");
+  }
+};
 
 export const chatApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -32,16 +46,30 @@ export const chatApi = api.injectEndpoints({
         query: getChatHistory,
       },
     ),
+    getUnreadMessages: builder.query<GetUnreadMessagesResBody, void>({
+      query: getUnreadMessages,
+      transformResponse: (
+        response: Array<{ room_id: string; unread_messages: string }>,
+      ) => {
+        return response.map((item) => {
+          return {
+            roomId: item.room_id,
+            unreadMessagesCount: parseInt(item.unread_messages, 10),
+          };
+        });
+      },
+    }),
+    readMessages: builder.mutation<ReadMessagesResBody, ReadMessagesReqBody>({
+      query: readMessages,
+    }),
     createRoom: builder.mutation<CreateChatRoomResBody, CreateChatRoomReqBody>({
       query: createChatRoom,
     }),
     joinRoom: builder.mutation<void, string>({
       queryFn: (roomId) => {
-        if (!socket) {
-          socket = io("http://localhost:3000");
-        }
+        initializeSocket();
 
-        if (!roomListeners[roomId]) {
+        if (socket && !roomListeners[roomId]) {
           socket.emit("joinRoom", roomId);
           roomListeners[roomId] = true;
         }
@@ -77,13 +105,12 @@ export const chatApi = api.injectEndpoints({
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
       ) {
         try {
-          // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
           // when data is received from the socket connection to the server,
           // update our query result with the received message
+          initializeSocket();
           if (socket) {
             socket.on(`messageReceived`, (message: Message, roomId) => {
-              console.info(`received message for roomID ${roomId}`);
               updateCachedData((draft) => {
                 if (!draft[roomId]) {
                   draft[roomId] = [];
@@ -93,9 +120,8 @@ export const chatApi = api.injectEndpoints({
               });
             });
           }
-        } catch {
-          // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
-          // in which case `cacheDataLoaded` will throw
+        } catch (err) {
+          console.error(err);
         }
 
         // cacheEntryRemoved will resolve when the cache subscription is no longer active
@@ -103,6 +129,36 @@ export const chatApi = api.injectEndpoints({
         // perform cleanup steps once the `cacheEntryRemoved` promise resolves
         if (socket) {
           socket.off(`messageReceived`);
+        }
+      },
+    }),
+    listenForNotifications: builder.query<void, void>({
+      queryFn: () => ({ data: undefined }),
+      async onCacheEntryAdded(
+        _arg,
+        { cacheDataLoaded, cacheEntryRemoved, dispatch, getState },
+      ) {
+        try {
+          await cacheDataLoaded;
+          initializeSocket();
+
+          if (socket) {
+            socket.on("notificationReceived", (roomId: string) => {
+              const state = getState() as RootState;
+              const activeRoom = state.chat.activeRoom;
+
+              if (activeRoom !== roomId) {
+                dispatch(incrementUnreadMessages(roomId));
+              }
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+
+        await cacheEntryRemoved;
+        if (socket) {
+          socket.off("notificationReceived");
         }
       },
     }),
@@ -117,6 +173,9 @@ export const {
   useGetUserChatListQuery,
   useGetChatHistoryQuery,
   useCreateRoomMutation,
+  useListenForNotificationsQuery,
+  useGetUnreadMessagesQuery,
+  useReadMessagesMutation,
 } = chatApi;
 
 export default chatApi.reducer;

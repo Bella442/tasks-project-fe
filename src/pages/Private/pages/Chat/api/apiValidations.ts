@@ -32,3 +32,13 @@ export const chatHistoryRequestSchema = z.object({
 });
 
 export const chatHistoryResponseSchema = z.array(messageSchema);
+
+export const updateReadMessagesRequestSchema = z.object({
+  roomId: z.string(),
+});
+
+export const updateReadMessagesResponseSchema = z.void();
+
+export const unreadMessagesResponseSchema = z.array(
+  z.object({ roomId: z.string(), unreadMessagesCount: z.number() }),
+);

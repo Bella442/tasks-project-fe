@@ -95,15 +95,15 @@ const createEndpoint = <
       extraParams: {},
     };
 
-    if (endpoint.method === HttpMethods.GET) {
-      returnObj.params = args;
-    } else {
-      returnObj.body = args;
-    }
-
     // can overwrite the return obj
     if (endpoint?.fn) {
       const endpointFn = endpoint.fn(args);
+
+      if (!endpointFn.body) {
+        returnObj.params = args;
+      } else {
+        returnObj.body = args;
+      }
 
       returnObj = {
         ...returnObj,

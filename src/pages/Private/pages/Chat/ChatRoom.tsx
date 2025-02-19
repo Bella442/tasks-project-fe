@@ -15,37 +15,38 @@ import {
 } from "./api/chatApi";
 import { Message } from "./types";
 
-interface IProperties {
-  activeRoom: string;
-}
-
 interface Scrollbar {
   scrollToBottom: () => void;
 }
 
-const ChatRoom = (props: IProperties) => {
+const ChatRoom = () => {
   const loggedUser = useAppSelector((state) => state.loggedUser.user);
+  const activeRoom = useAppSelector((state) => state.chat.activeRoom);
   const scrollbarRef = useRef(null);
   const { data } = useReceiveMessagesQuery();
   const { data: chatHistory } = useGetChatHistoryQuery({
-    roomId: props.activeRoom,
+    roomId: activeRoom,
   });
   const [sendMessage] = useSendMessageMutation();
 
   const currentRoomMessages = useMemo(() => {
-    const messages = new Map<string, Message[]>([[props.activeRoom, []]]);
+    const messages = new Map<string, Message[]>([[activeRoom, []]]);
 
     if (chatHistory) {
-      messages.set(props.activeRoom, [...chatHistory]);
+      messages.set(activeRoom, [...chatHistory]);
     }
 
     if (data) {
       for (const [key, value] of Object.entries(data)) {
-        messages.get(key)?.push(...value);
+        // Ensure messages re not duplicated
+        messages.set(
+          key,
+          Array.from(new Set([...(chatHistory || []), ...value])),
+        );
       }
     }
 
-    const roomMessages = messages?.get(props.activeRoom);
+    const roomMessages = messages?.get(activeRoom);
 
     roomMessages?.sort(
       (a, b) =>
@@ -53,7 +54,7 @@ const ChatRoom = (props: IProperties) => {
     );
 
     return roomMessages;
-  }, [data, chatHistory, props.activeRoom]);
+  }, [data, chatHistory, activeRoom]);
 
   useEffect(() => {
     const current = scrollbarRef.current as unknown as Scrollbar;
@@ -74,7 +75,7 @@ const ChatRoom = (props: IProperties) => {
         createdAt: new Date().toString(),
       };
 
-      sendMessage({ roomId: props.activeRoom, message });
+      sendMessage({ roomId: activeRoom, message });
     }
   };
 
