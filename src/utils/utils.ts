@@ -41,5 +41,5 @@ export const makeUrl = (path: string, externalUrl?: string): string => {
 };
 
 export const getTimeString = (date: Date): string => {
-  return `${date.getHours()}:${date.getMinutes()}`;
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 };

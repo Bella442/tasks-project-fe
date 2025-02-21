@@ -47,7 +47,7 @@ export const getUnreadMessages = createEndpoint({
   }),
 });
 
-export const readMessages = createEndpoint({
+export const markMessagesRead = createEndpoint({
   method: HttpMethods.PATCH,
   requestSchema: updateReadMessagesRequestSchema,
   responseSchema: updateReadMessagesResponseSchema,

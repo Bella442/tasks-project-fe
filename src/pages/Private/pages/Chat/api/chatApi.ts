@@ -10,15 +10,15 @@ import {
   GetChatHistoryResBody,
   GetUnreadMessagesResBody,
   GetUserChatListResBody,
-  ReadMessagesReqBody,
-  ReadMessagesResBody,
+  MarkMessagesReadReqBody,
+  MarkMessagesReadResBody,
 } from "./apiTypes";
 import {
   createChatRoom,
   getChatHistory,
   getUnreadMessages,
   getUserChatList,
-  readMessages,
+  markMessagesRead,
 } from "./chatEndpoints";
 import { incrementUnreadMessages } from "./chatSlice";
 import { Message } from "../types";
@@ -59,8 +59,11 @@ export const chatApi = api.injectEndpoints({
         });
       },
     }),
-    readMessages: builder.mutation<ReadMessagesResBody, ReadMessagesReqBody>({
-      query: readMessages,
+    markMessagesRead: builder.mutation<
+      MarkMessagesReadResBody,
+      MarkMessagesReadReqBody
+    >({
+      query: markMessagesRead,
     }),
     createRoom: builder.mutation<CreateChatRoomResBody, CreateChatRoomReqBody>({
       query: createChatRoom,
@@ -175,7 +178,7 @@ export const {
   useCreateRoomMutation,
   useListenForNotificationsQuery,
   useGetUnreadMessagesQuery,
-  useReadMessagesMutation,
+  useMarkMessagesReadMutation,
 } = chatApi;
 
 export default chatApi.reducer;

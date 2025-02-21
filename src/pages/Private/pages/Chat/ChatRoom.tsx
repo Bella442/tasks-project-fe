@@ -10,6 +10,7 @@ import { StyledChatRoom } from "./ChatRoom.style";
 import TypeMessageContainer from "./TypeMessageContainer";
 import {
   useGetChatHistoryQuery,
+  useMarkMessagesReadMutation,
   useReceiveMessagesQuery,
   useSendMessageMutation,
 } from "./api/chatApi";
@@ -28,6 +29,7 @@ const ChatRoom = () => {
     roomId: activeRoom,
   });
   const [sendMessage] = useSendMessageMutation();
+  const [markMessagesRead] = useMarkMessagesReadMutation();
 
   const currentRoomMessages = useMemo(() => {
     const messages = new Map<string, Message[]>([[activeRoom, []]]);
@@ -64,7 +66,15 @@ const ChatRoom = () => {
         current.scrollToBottom();
       }, 50);
     }
-  }, [currentRoomMessages]);
+
+    return () => {
+      if (currentRoomMessages) {
+        setTimeout(() => {
+          markMessagesRead({ roomId: activeRoom });
+        }, 5000);
+      }
+    };
+  }, [currentRoomMessages, markMessagesRead, activeRoom]);
 
   const handleSendMessage = (messageText: string) => {
     if (messageText.trim().length > 0) {

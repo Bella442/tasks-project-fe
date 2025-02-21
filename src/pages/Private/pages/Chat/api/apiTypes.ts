@@ -5,7 +5,7 @@ import {
   getChatHistory,
   getUnreadMessages,
   getUserChatList,
-  readMessages,
+  markMessagesRead,
 } from "./chatEndpoints";
 
 /**
@@ -49,15 +49,17 @@ export type GetUnreadMessagesResBody =
 /**/
 
 /**
-	ReadMessagesEndpointType, ReadMessagesResBody
+	MarkMessagesReadEndpointType, MarkMessagesReadResBody
 	@return EndpointType, ResponseBodyType
 **/
-export type ReadMessagesEndpointType = GetEndpointSchemaType<
-  typeof readMessages
+export type MarkMessagesReadEndpointType = GetEndpointSchemaType<
+  typeof markMessagesRead
 >;
 
-export type ReadMessagesResBody = ReadMessagesEndpointType["responseSchema"];
-export type ReadMessagesReqBody = ReadMessagesEndpointType["requestSchema"];
+export type MarkMessagesReadResBody =
+  MarkMessagesReadEndpointType["responseSchema"];
+export type MarkMessagesReadReqBody =
+  MarkMessagesReadEndpointType["requestSchema"];
 
 /**/
 
