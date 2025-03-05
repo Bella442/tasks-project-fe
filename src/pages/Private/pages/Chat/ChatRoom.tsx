@@ -66,15 +66,13 @@ const ChatRoom = () => {
         current.scrollToBottom();
       }, 50);
     }
-
-    return () => {
-      if (currentRoomMessages) {
-        setTimeout(() => {
-          markMessagesRead({ roomId: activeRoom });
-        }, 5000);
-      }
-    };
   }, [currentRoomMessages, markMessagesRead, activeRoom]);
+
+  useEffect(() => {
+    return () => {
+      markMessagesRead({ roomId: activeRoom });
+    };
+  }, [markMessagesRead, activeRoom]);
 
   const handleSendMessage = (messageText: string) => {
     if (messageText.trim().length > 0) {

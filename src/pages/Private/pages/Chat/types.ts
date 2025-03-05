@@ -7,10 +7,10 @@ export interface Message {
 }
 
 export interface ChatUser {
-  email: string;
+  email?: string;
   firstName: string;
   id: string;
-  lastName: string;
+  lastName?: string;
 }
 
 export interface Chat {

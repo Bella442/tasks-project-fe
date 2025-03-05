@@ -1,14 +1,14 @@
 import { z } from "zod";
 
-import { userSchema } from "@api/users/apiValidations";
+import { chatUserSchema } from "@api/users/apiValidations";
 
 export const chatSchema = z.object({
   id: z.number(),
   roomId: z.string(),
   initiatorId: z.string(),
   participantId: z.string(),
-  initiatorUser: userSchema,
-  participantUser: userSchema,
+  initiatorUser: chatUserSchema,
+  participantUser: chatUserSchema,
 });
 
 export const chatRequestSchema = z.object({

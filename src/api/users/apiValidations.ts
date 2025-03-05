@@ -12,10 +12,10 @@ export const userSchema = z.object({
 });
 
 export const chatUserSchema = z.object({
-  email: z.string(),
+  email: z.string().optional(),
   firstName: z.string(),
   id: z.string(),
-  lastName: z.string(),
+  lastName: z.string().optional(),
 });
 
 export const usersResponseSchema = z.array(userSchema);
