@@ -1,4 +1,4 @@
-# Sciant React Template App
+# React Template App
 
 ### Overview
 
